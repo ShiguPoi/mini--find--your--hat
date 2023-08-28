@@ -1,18 +1,12 @@
 // Codecademy: https://www.codecademy.com/paths/front-end-engineer-career-path/tracks/fecp-javascript-syntax-part-iii/modules/fecp-challenge-project-find-your-hat/projects/find-your-hat
 
 // Please break down your thinking process step-by-step (mandatory)
-
-// requirement
-// class field endup with 2d array that hold string
-// class field had print method that paint whole field (suggest to print string instread if array)
-// generated field static method taking width x height and percent argument to determine percent of hole
-
 // step 1 : Function that generate 2 d array
 // step 1.1 : 2d array take width and height and hole chance
 // step 1.2 : random where to place const hold this take number
 // step 1.2.1 : isn't take stupid way and take random chance then dice roll everyfield better? 
 // step 1.4 : place hat at random where it isn't 0,0 (fine if it replace hole?) 
-// step 1.5 : function to place character at random (also update x,y coordinator)
+// step 1.5 extra : function to place character at random (also update x,y coordinator)
 
 // step 2 : how to make path move
 // step 2.1 : prompt that keep taking W A S D ? (I love WASD so just let i be)
@@ -27,9 +21,9 @@
 
 // extra
 // step a : function keep asking about playing
+// step b : wildfire (hardmode)
 
 // not finish
-// step b : wildfire (hardmode)
 // step c : path finder algorithm (eh)
 
 // JS Assessment: Find your hat //
@@ -41,6 +35,10 @@ const hole = '🔥';
 const fieldCharacter = '⬜';
 const pathCharacter = '🐍';
 let exitGame = false;
+let winScore = 0;
+let loseScore = 0;
+const testHole = '🍌';
+let enableHard = false;
 
 class Field {
   constructor(field = [[]]) {
@@ -59,8 +57,8 @@ class Field {
     for (let i = 0; i < height; i++) field[i] = new Array(width);
     
     //1.2 random place hole 
-    for (let i = 0; i < width; i++) {
-        for (let j = 0; j < height; j++) {
+    for (let i = 0; i < height; i++) {
+        for (let j = 0; j < width; j++) {
             field[i][j] = Math.random() > percentage ? fieldCharacter : hole;
         }
     }
@@ -71,7 +69,7 @@ class Field {
     return field;
   }
 
-  //1.3 need to place character function elsewhere as this will keep return 0,0
+  //1.5 need to place character function elsewhere as this will keep return 0,0
   randowSpawn() {
     this.positionX = Math.floor((Math.random())*this.field[0].length);
     this.positionY = Math.floor((Math.random())*this.field.length);
@@ -82,6 +80,13 @@ class Field {
   // 3.0 print field method to make it eaier 
   print() {
     clear(); 
+    let extraWord = '';
+    if(enableHard === true) {
+      extraWord = '(HARD MODE)';
+    } else {
+      extraWord = '';
+    }
+    console.log(`Score win : ${winScore} // lose : ${loseScore} ${extraWord}`)
     // your print map code here (i don't know how this work, don't ask)
     for (let row of this.field){
       console.log(row.join(''));
@@ -91,9 +96,10 @@ class Field {
   
   // the rest of your code starts here.
 
+  // 2.2 loop to check hero
   move(direction) {
 
-    // delete old hero
+    // remove hero
     this.field[this.positionY][this.positionX] = fieldCharacter;
 
     // move hero
@@ -102,12 +108,19 @@ class Field {
     else if (direction === 'a') this.positionX--;
     else if (direction === 's') this.positionY++;
     else if (direction === 'd') this.positionX++;
-    else return 0;
+    else {
+      // redraw hero incase hero can't move
+      this.field[this.positionY][this.positionX] = pathCharacter;
+      return 0;
+    }
 
-    // check if out of bound
+    // check if hero is out of bound 
+    // everything below here need return to stop bacause number is minus
+    // it will kick array to hell
     if (this.positionX < 0 || this.positionX >= this.field[0].length || this.positionY < 0 || this.positionY >= this.field.length ){
       this.notDead = false;
       console.log('Sadly but you jump out from stage!')
+      loseScore++;
       return 0;
     }
 
@@ -115,6 +128,7 @@ class Field {
     if (this.field[this.positionY][this.positionX] === hole){
       this.notDead = false;
       console.log('You jump in to the hole!!')
+      loseScore++;
       return 0;
     }
 
@@ -122,6 +136,7 @@ class Field {
     if (this.field[this.positionY][this.positionX] === hat){
       this.notDead = false;
       console.log('You found the hat, YOU WIN!!')
+      winScore++;
       return 0;
     }
 
@@ -129,17 +144,19 @@ class Field {
     if (this.field[this.positionY][this.positionX] === fieldCharacter) this.field[this.positionY][this.positionX] = pathCharacter;
   }
 
+  // step 4
   play() {
+    this.hardCheck()
     this.notDead = true; 
     while(this.notDead){
       this.print()
-      /* console.log(playField) */
       // step 2.1
       console.log('W = Up / A = Left / S = Down / D = Right')
       const direction = prompt ('input and enter to move : ');
       this.move(direction)
+      if(enableHard) this.hardMode(); 
+    }
   }
-}
 
   replay() {
     let ask = prompt ('Want to play again? (y/n): ');
@@ -150,18 +167,41 @@ class Field {
       case 'n':
         exitGame = true;
         break;
-      
+      default :
+        this.replay()
     }
   }
 
+  // step b hardmode
+  hardMode() {
+    let randomX = Math.floor((Math.random())*this.field[0].length);
+    let randomY = Math.floor((Math.random())*this.field.length);
+    if (this.field[randomY][randomX] === fieldCharacter){
+      this.field[randomY][randomX] = hole;
+    }
+    else {
+      this.hardMode()
+    }
+  }
+  
+   hardCheck() {
+    let askHard = prompt ('Want to HARD MODE? (random fire spawn) (y/n): ');
+    askHard = askHard.toLowerCase();
+    if (askHard === 'y'){
+      enableHard = true;
+    } else if (askHard === 'n'){
+      enableHard = false;
+    } else {
+      this.hardCheck()
+    }
+  } 
+  
 }
 
 // 4.0 keep asking about play
 while(!exitGame){
-  let playField = new Field(Field.generateField(10,10));
+  let playField = new Field(Field.generateField(20,15));
   playField.randowSpawn()
   playField.play()
   playField.replay()
 }
-
-
