@@ -1,15 +1,10 @@
-//--- Please copy and paste your GitHub Repo on line 2 (optional) ---//
-// <GitHub Repo>
-
-// JavaScript Assessment Rubric: https://generation.instructure.com/courses/2342/assignments/143783
-
 // Codecademy: https://www.codecademy.com/paths/front-end-engineer-career-path/tracks/fecp-javascript-syntax-part-iii/modules/fecp-challenge-project-find-your-hat/projects/find-your-hat
 
 // Please break down your thinking process step-by-step (mandatory)
 
 // requirement
 // class field endup with 2d array that hold string
-// class field had print method that paint whold field (suggest to print string instread if array)
+// class field had print method that paint whole field (suggest to print string instread if array)
 // generated field static method taking width x height and percent argument to determine percent of hole
 
 // step 1 : Function that generate 2 d array
@@ -33,6 +28,9 @@
 // extra
 // step a : function keep asking about playing
 
+// not finish
+// step b : wildfire (hardmode)
+// step c : path finder algorithm (eh)
 
 // JS Assessment: Find your hat //
 
