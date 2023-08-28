@@ -169,7 +169,6 @@ class Field {
       // input function
       const direction = prompt ('input and enter to move : ');
       this.move(direction)
-      // yes it is intend even hero didn't move hard mode still move :D
       if(enableHard) this.hardMode(); 
     }
   }
@@ -220,7 +219,7 @@ class Field {
 // 4.0 keep asking about play
 while(!exitGame){
   //use not same number of width and height to check if logic true
-  let playField = new Field(Field.generateField(20,15));
+  let playField = new Field(Field.generateField(15,10));
   playField.randowSpawn()
   playField.play()
   playField.replay()
