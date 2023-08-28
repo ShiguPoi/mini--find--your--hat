@@ -7,6 +7,9 @@
 // Codecademy: https://www.codecademy.com/paths/front-end-engineer-career-path/tracks/fecp-javascript-syntax-part-iii/modules/fecp-challenge-project-find-your-hat/projects/find-your-hat
 
 // Please break down your thinking process step-by-step (mandatory)
+// generate map -> place hero and hat -> think how hero move work 
+// -> win and lose condition -> exit method -> hard mode impliment
+
 // step 1 : Function that generate 2 d array
 // step 1.1 : 2d array take width and height and hole chance
 // step 1.2 : random where to place const hold this take number
@@ -23,7 +26,7 @@
 
 // step 3 : print function that repaint array to string by console log
 
-// step 4 : play function
+// step 4 : play function that loop and ask if want to play
 
 // extra
 // step a : function keep asking about playing
@@ -52,6 +55,7 @@ class Field {
     this.positionX = 0;
     this.positionY = 0;
     // Set the "home" position before the game starts
+    // reminder it is [position y][position x]
     this.field[0][0] = pathCharacter;
     this.notDead = true;
   }
@@ -72,6 +76,7 @@ class Field {
     //1.4 place hat
     field[Math.floor((Math.random())*height)][Math.floor((Math.random())*width)] = hat;
 
+    //field finish but with 0,0 as start location
     return field;
   }
 
@@ -79,13 +84,16 @@ class Field {
   randowSpawn() {
     this.positionX = Math.floor((Math.random())*this.field[0].length);
     this.positionY = Math.floor((Math.random())*this.field.length);
+    // remove start location
     this.field[0][0] = fieldCharacter;
+    // new start location
     this.field[this.positionY][this.positionX] = pathCharacter;
   }
 
   // 3.0 print field method to make it eaier 
   print() {
     clear(); 
+    //extra vanity if play hardmode
     let extraWord = '';
     if(enableHard === true) {
       extraWord = '(HARD MODE)';
@@ -115,7 +123,7 @@ class Field {
     else if (direction === 's') this.positionY++;
     else if (direction === 'd') this.positionX++;
     else {
-      // redraw hero incase hero can't move
+      // redraw hero incase hero didn't move
       this.field[this.positionY][this.positionX] = pathCharacter;
       return 0;
     }
@@ -146,7 +154,7 @@ class Field {
       return 0;
     }
 
-    //draw new hero position
+    //draw new hero position if not end
     if (this.field[this.positionY][this.positionX] === fieldCharacter) this.field[this.positionY][this.positionX] = pathCharacter;
   }
 
@@ -158,12 +166,15 @@ class Field {
       this.print()
       // step 2.1
       console.log('W = Up / A = Left / S = Down / D = Right')
+      // input function
       const direction = prompt ('input and enter to move : ');
       this.move(direction)
+      // yes it is intend even hero didn't move hard mode still move :D
       if(enableHard) this.hardMode(); 
     }
   }
 
+  // replay function, nothing special that i use switch
   replay() {
     let ask = prompt ('Want to play again? (y/n): ');
     ask = ask.toLowerCase();
@@ -178,7 +189,7 @@ class Field {
     }
   }
 
-  // step b hardmode
+  // step b hardmode, just random where to place extra fire
   hardMode() {
     let randomX = Math.floor((Math.random())*this.field[0].length);
     let randomY = Math.floor((Math.random())*this.field.length);
@@ -186,6 +197,7 @@ class Field {
       this.field[randomY][randomX] = hole;
     }
     else {
+      //recursive incase fire is not spawn on field
       this.hardMode()
     }
   }
@@ -193,6 +205,7 @@ class Field {
    hardCheck() {
     let askHard = prompt ('Want to HARD MODE? (random fire spawn) (y/n): ');
     askHard = askHard.toLowerCase();
+    //i don't know why but code is break if i use switch here so just use if
     if (askHard === 'y'){
       enableHard = true;
     } else if (askHard === 'n'){
@@ -206,7 +219,8 @@ class Field {
 
 // 4.0 keep asking about play
 while(!exitGame){
-  let playField = new Field(Field.generateField(20,20));
+  //use not same number of width and height to check if logic true
+  let playField = new Field(Field.generateField(20,15));
   playField.randowSpawn()
   playField.play()
   playField.replay()
